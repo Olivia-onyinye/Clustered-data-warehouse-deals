@@ -1,0 +1,5 @@
+FROM openjdk:17.0
+EXPOSE 8090
+LABEL MAINTAINER="OLIVIA NWACHUKWU "n.oliviaonyinye@gmail.com""
+COPY target/Data-Warehouse-0.0.1-SNAPSHOT.jar Data-Warehouse-0.0.1.jar
+ENTRYPOINT ["java", "-jar", "/Data-Warehouse-0.0.1.jar", "--server.port=8090"]

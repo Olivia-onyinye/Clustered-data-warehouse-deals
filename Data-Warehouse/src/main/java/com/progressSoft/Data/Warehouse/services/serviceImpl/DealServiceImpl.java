@@ -30,7 +30,7 @@ public class DealServiceImpl implements DealService {
         if (existingDealRequest) {
             String errorMessage = "Deal request with the same unique ID already exists";
             logger.error(errorMessage);
-            throw new DealRequestAlreadyExistException("Deal request with the same unique ID already exists");
+            throw new DealRequestAlreadyExistException(errorMessage);
         }
         Deal deal = new Deal();
         deal.setDealUniqueId(dealRequestDto.getDealUniqueId());
@@ -47,18 +47,13 @@ public class DealServiceImpl implements DealService {
         for (DealRequestDto dealRequestDto1 : dealRequestDtos) {
             try {
                 saveDealRequest(dealRequestDto1);
-
+            } catch (DealRequestAlreadyExistException e) {
+                logger.error("Error saving deal request: {}", e.getMessage());
+                throw new DealRequestAlreadyExistException("Deal request with the same unique ID already exists");
             } catch (DataIntegrityViolationException e) {
-                String errorMsg = "Error saving deal request: " + e.getMessage();
-                logger.error(errorMsg);
-                if (e.getMessage().contains("constraint [unique_deal_unique_id]")) {
-                    logger.error("Deal request with the same deal ID already exists.");
-                } else {
                     logger.error("Data integrity violation occurred: {}", e.getMessage());
-                }
         } catch (Exception e) {
                 logger.error("An Error occurred while saving deal request: {}", e.getMessage());
-                System.err.println("An Error occurred while saving deal request: " + e.getMessage());
             }
         }
     }

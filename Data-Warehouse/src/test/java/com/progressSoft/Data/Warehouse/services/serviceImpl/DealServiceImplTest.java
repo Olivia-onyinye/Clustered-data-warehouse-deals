@@ -65,6 +65,14 @@ class DealServiceImplTest {
         verify(dealRepository, times(1)).existsByDealUniqueId(dealRequestDto.getDealUniqueId());
     }
     @Test
+    void testSaveDealRequests_HandleDealAlreadyExistingException() {
+        List<DealRequestDto> dealRequestDtos = List.of(new DealRequestDto());
+        doThrow(new DealRequestAlreadyExistException("constraint [unique_deal_unique_id]"))
+                .when(dealRepository).save(any(Deal.class));
+        dealService.saveDealRequests(dealRequestDtos);
+        verify(dealRepository, times(1)).save(any(Deal.class));
+    }
+    @Test
     void testSaveDealRequests_HandleDataIntegrityViolationException() {
         List<DealRequestDto> dealRequestDtos = List.of(new DealRequestDto());
         doThrow(new DataIntegrityViolationException("constraint [unique_deal_unique_id]"))

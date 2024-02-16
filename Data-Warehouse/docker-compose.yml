@@ -1,0 +1,28 @@
+version: "3.7"
+services:
+  app:
+    image: "deal-request:latest"
+    container_name: dealRequestApp
+    build: .
+    restart: always
+    ports:
+      - "8090:8090"
+    depends_on:
+      - dealRequestDb
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/dealRequestDb
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=Kamsiyochukwu1*
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+
+  dealRequestDb:
+    platform: linux/x86_64
+    image: "postgresql:latest"
+    container_name: dealRequest
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRESQL_DATABASE: dealRequestDb
+      POSTGRESQL_ROOT_PASSWORD: Kamsiyochukwu1*
+      POSTGRESQL_ROOT_USERNAME: postgres
