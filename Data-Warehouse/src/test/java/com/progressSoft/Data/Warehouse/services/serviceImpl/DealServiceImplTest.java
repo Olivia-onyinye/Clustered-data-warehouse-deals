@@ -67,8 +67,7 @@ class DealServiceImplTest {
     @Test
     void testSaveDealRequests_HandleDealAlreadyExistingException() {
         List<DealRequestDto> dealRequestDtos = List.of(new DealRequestDto());
-        doThrow(new DealRequestAlreadyExistException("constraint [unique_deal_unique_id]"))
-                .when(dealRepository).save(any(Deal.class));
+        doThrow(DealRequestAlreadyExistException.class).when(dealRepository).save(any(Deal.class));
         dealService.saveDealRequests(dealRequestDtos);
         verify(dealRepository, times(1)).save(any(Deal.class));
     }

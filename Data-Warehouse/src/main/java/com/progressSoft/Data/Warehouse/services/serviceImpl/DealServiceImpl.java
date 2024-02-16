@@ -48,7 +48,7 @@ public class DealServiceImpl implements DealService {
             try {
                 saveDealRequest(dealRequestDto1);
             } catch (DealRequestAlreadyExistException e) {
-                logger.error("Error saving deal request: {}", e.getMessage());
+                logger.error("Deal request with the same unique ID already exists: {}", e.getMessage());
                 throw new DealRequestAlreadyExistException("Deal request with the same unique ID already exists");
             } catch (DataIntegrityViolationException e) {
                     logger.error("Data integrity violation occurred: {}", e.getMessage());
