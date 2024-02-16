@@ -45,7 +45,7 @@ class DealControllerTest {
 
     @Test
     void saveDealRequests_ReturnsCreated() throws Exception {
-        DealRequestDto dealRequestDto = new DealRequestDto("DR001", CurrencyIsoCode.USD, CurrencyIsoCode.NGN, LocalDateTime.now(), 1000.00);
+        DealRequestDto dealRequestDto = new DealRequestDto("DR001", CurrencyIsoCode.USD, CurrencyIsoCode.NGN, 1000.00);
         String jsonRequest = objectMapper.writeValueAsString(Collections.singletonList(dealRequestDto));
         Mockito.doNothing().when(dealService).saveDealRequests(Collections.singletonList(dealRequestDto));
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/api/deals/requests")

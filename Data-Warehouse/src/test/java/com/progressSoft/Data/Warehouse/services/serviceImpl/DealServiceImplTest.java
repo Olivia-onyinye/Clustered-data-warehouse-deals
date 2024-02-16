@@ -34,9 +34,9 @@ class DealServiceImplTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        dealRequestDto = new DealRequestDto("DR001", CurrencyIsoCode.USD, CurrencyIsoCode.NGN, LocalDateTime.now(), 1000.00);
+        dealRequestDto = new DealRequestDto("DR001", CurrencyIsoCode.USD, CurrencyIsoCode.NGN, 1000.00);
         deal = new Deal(1L, "DR001", CurrencyIsoCode.USD, CurrencyIsoCode.NGN, LocalDateTime.now(), 1000.00);
-        dealRequestDto2 = new DealRequestDto("DR002", CurrencyIsoCode.USD, CurrencyIsoCode.NGN, LocalDateTime.now(), 2000.00);
+        dealRequestDto2 = new DealRequestDto("DR002", CurrencyIsoCode.USD, CurrencyIsoCode.NGN, 2000.00);
         dealRequestDtos = new ArrayList<>();
         dealRequestDtos.add(dealRequestDto);
         when(dealRepository.save(deal)).thenReturn(deal);

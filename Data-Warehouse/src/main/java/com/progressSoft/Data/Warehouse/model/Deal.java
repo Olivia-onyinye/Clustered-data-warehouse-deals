@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 @Builder
@@ -16,8 +17,8 @@ public class Deal {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
 
-    @Column(name = "deal_unique_id", nullable = false, unique = true)
     @NotBlank(message = "Deal unique Id is required")
+    @Column(name = "deal_unique_id", unique = true)
     private String dealUniqueId;
 
     @Column(name = "from_currency_iso_code", nullable = false)
@@ -29,7 +30,7 @@ public class Deal {
     @Enumerated(EnumType.STRING)
     private CurrencyIsoCode toCurrency;
     @Column(name="deal_timestamp")
-    @NotNull(message = "Deal timestamp is required")
+    @CreationTimestamp
     private LocalDateTime dealTimestamp;
 
     @Column(name = "deal_amount", nullable = false)
@@ -60,7 +61,7 @@ public class Deal {
         return dealUniqueId;
     }
 
-    public void setDealId(String dealUniqueId) {
+    public void setDealUniqueId(String dealUniqueId) {
         this.dealUniqueId = dealUniqueId;
     }
 

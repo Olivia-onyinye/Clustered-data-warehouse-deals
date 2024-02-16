@@ -4,7 +4,6 @@ public class DealRequestAlreadyExistException extends RuntimeException{
 
     public DealRequestAlreadyExistException(String message) {
 
-
         super(message);
     }
 }

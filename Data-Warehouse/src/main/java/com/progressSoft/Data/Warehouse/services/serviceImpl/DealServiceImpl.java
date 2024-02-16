@@ -12,6 +12,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -29,19 +30,23 @@ public class DealServiceImpl implements DealService {
         if (existingDealRequest) {
             String errorMessage = "Deal request with the same unique ID already exists";
             logger.error(errorMessage);
-            throw new DealRequestAlreadyExistException(errorMessage);
+            throw new DealRequestAlreadyExistException("Deal request with the same unique ID already exists");
         }
         Deal deal = new Deal();
-        BeanUtils.copyProperties(dealRequestDto, deal);
+        deal.setDealUniqueId(dealRequestDto.getDealUniqueId());
+        deal.setFromCurrency(dealRequestDto.getFromCurrency());
+        deal.setToCurrency(dealRequestDto.getToCurrency());
+        deal.setDealTimestamp(LocalDateTime.now());
+        deal.setDealAmount(dealRequestDto.getDealAmount());
         dealRepository.save(deal);
         logger.info("Deal request has been saved successfully: {}", dealRequestDto.getDealUniqueId());
     }
 
     @Override
     public void saveDealRequests(List<DealRequestDto> dealRequestDtos) {
-        for (DealRequestDto dealRequestDto : dealRequestDtos) {
+        for (DealRequestDto dealRequestDto1 : dealRequestDtos) {
             try {
-                saveDealRequest(dealRequestDto);
+                saveDealRequest(dealRequestDto1);
 
             } catch (DataIntegrityViolationException e) {
                 String errorMsg = "Error saving deal request: " + e.getMessage();

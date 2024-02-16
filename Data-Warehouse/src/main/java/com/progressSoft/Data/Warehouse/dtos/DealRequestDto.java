@@ -1,11 +1,13 @@
 package com.progressSoft.Data.Warehouse.dtos;
 
 import com.progressSoft.Data.Warehouse.enums.CurrencyIsoCode;
+import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -13,6 +15,7 @@ import java.time.LocalDateTime;
 public class DealRequestDto {
 
     @NotBlank(message = "Deal unique Id is required")
+    @Column(name = "deal_unique_id", nullable = false, unique = true)
     private String dealUniqueId;
 
     @NotNull(message = "From Currency ISO Code is required")
@@ -23,8 +26,9 @@ public class DealRequestDto {
     @Enumerated(EnumType.STRING)
     private CurrencyIsoCode toCurrency;
 
-    @NotNull(message = "Deal timestamp is required")
-    private LocalDateTime dealTimestamp;
+//    @NotNull(message = "Deal timestamp is required")
+//    @CreationTimestamp
+//    private LocalDateTime dealTimestamp;
 
     @NotNull(message = "Deal amount is required")
     private Double dealAmount;
@@ -33,11 +37,11 @@ public class DealRequestDto {
     public DealRequestDto() {
     }
 
-    public DealRequestDto(String dealUniqueId, CurrencyIsoCode fromCurrency, CurrencyIsoCode toCurrency, LocalDateTime dealTimestamp, Double dealAmount) {
+    public DealRequestDto(String dealUniqueId, CurrencyIsoCode fromCurrency, CurrencyIsoCode toCurrency, Double dealAmount) {
         this.dealUniqueId = dealUniqueId;
         this.fromCurrency = fromCurrency;
         this.toCurrency = toCurrency;
-        this.dealTimestamp = dealTimestamp;
+        //this.dealTimestamp = dealTimestamp;
         this.dealAmount = dealAmount;
     }
 
@@ -65,13 +69,13 @@ public class DealRequestDto {
         this.toCurrency = toCurrency;
     }
 
-    public LocalDateTime getDealTimestamp() {
-        return dealTimestamp;
-    }
-
-    public void setDealTimestamp(LocalDateTime dealTimestamp) {
-        this.dealTimestamp = dealTimestamp;
-    }
+//    public LocalDateTime getDealTimestamp() {
+//        return dealTimestamp;
+//    }
+//
+//    public void setDealTimestamp(LocalDateTime dealTimestamp) {
+//        this.dealTimestamp = dealTimestamp;
+//    }
 
     public Double getDealAmount() {
         return dealAmount;
