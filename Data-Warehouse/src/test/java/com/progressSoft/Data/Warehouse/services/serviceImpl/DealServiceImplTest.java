@@ -33,16 +33,13 @@ class DealServiceImplTest {
     private DealServiceImpl dealService;
     private DealRequestDto dealRequestDto;
     private Deal deal;
-    private DealRequestDto dealRequestDto2;
-    private List<DealRequestDto> dealRequestDtos;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
         dealRequestDto = new DealRequestDto("DR001", "USD", "ngn", new BigDecimal("1000.00"));
         deal = new Deal(1L, "DR001", CurrencyIsoCode.USD, CurrencyIsoCode.NGN, LocalDateTime.now(), new BigDecimal("1000.00"));
-        dealRequestDto2 = new DealRequestDto("DR002", "NGN", "USD", new BigDecimal("2000.00"));
-        dealRequestDtos = new ArrayList<>();
+        List<DealRequestDto> dealRequestDtos = new ArrayList<>();
         dealRequestDtos.add(dealRequestDto);
         when(dealRepository.save(deal)).thenReturn(deal);
     }

@@ -18,6 +18,7 @@ public class DealRequestDto {
     private BigDecimal dealAmount;
 
 
+
     public DealRequestDto() {
     }
 
