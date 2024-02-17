@@ -1,31 +1,24 @@
 package com.progressSoft.Data.Warehouse.dtos;
 
-import com.progressSoft.Data.Warehouse.enums.CurrencyIsoCode;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import com.progressSoft.Data.Warehouse.model.Deal;
 
 import java.math.BigDecimal;
 
-@ToString
-public class DealRequestDto {
+public class DealResponse {
 
-    @NotBlank(message = "Deal unique Id is required")
     private String dealUniqueId;
     private String fromCurrency;
     private String toCurrency;
-    @NotNull(message = "Deal amount is required")
     private BigDecimal dealAmount;
 
-
-    public DealRequestDto() {
-    }
-
-    public DealRequestDto(String dealUniqueId, String fromCurrency, String toCurrency, BigDecimal dealAmount) {
+    public DealResponse(String dealUniqueId, String fromCurrency, String toCurrency, BigDecimal dealAmount) {
         this.dealUniqueId = dealUniqueId;
         this.fromCurrency = fromCurrency;
         this.toCurrency = toCurrency;
         this.dealAmount = dealAmount;
+    }
+
+    public DealResponse() {
     }
 
     public String getDealUniqueId() {
@@ -58,5 +51,15 @@ public class DealRequestDto {
 
     public void setDealAmount(BigDecimal dealAmount) {
         this.dealAmount = dealAmount;
+    }
+
+
+    public static DealResponse of(Deal response) {
+        DealResponse dealResponse = new DealResponse();
+        dealResponse.setDealUniqueId(response.getDealUniqueId());
+        dealResponse.setFromCurrency(response.getFromCurrency().name());
+        dealResponse.setToCurrency(response.getToCurrency().name());
+        dealResponse.setDealAmount(response.getDealAmount());
+        return dealResponse;
     }
 }

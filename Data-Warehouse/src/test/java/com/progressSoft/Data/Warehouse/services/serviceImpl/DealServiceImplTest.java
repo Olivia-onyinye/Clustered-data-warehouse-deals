@@ -2,28 +2,33 @@ package com.progressSoft.Data.Warehouse.services.serviceImpl;
 
 import com.progressSoft.Data.Warehouse.dtos.DealRequestDto;
 import com.progressSoft.Data.Warehouse.enums.CurrencyIsoCode;
-import com.progressSoft.Data.Warehouse.exceptions.DataIntegrityViolationException;
 import com.progressSoft.Data.Warehouse.exceptions.DealRequestAlreadyExistException;
+import com.progressSoft.Data.Warehouse.exceptions.InvalidDealRequestException;
 import com.progressSoft.Data.Warehouse.model.Deal;
 import com.progressSoft.Data.Warehouse.repository.DealRepository;
+import com.progressSoft.Data.Warehouse.services.DealValidationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 class DealServiceImplTest {
 
     @Mock
     private  DealRepository dealRepository;
+    @Mock
+    private DealValidationService validationService;
     @InjectMocks
     private DealServiceImpl dealService;
     private DealRequestDto dealRequestDto;
@@ -34,67 +39,50 @@ class DealServiceImplTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        dealRequestDto = new DealRequestDto("DR001", CurrencyIsoCode.USD, CurrencyIsoCode.NGN, 1000.00);
-        deal = new Deal(1L, "DR001", CurrencyIsoCode.USD, CurrencyIsoCode.NGN, LocalDateTime.now(), 1000.00);
-        dealRequestDto2 = new DealRequestDto("DR002", CurrencyIsoCode.USD, CurrencyIsoCode.NGN, 2000.00);
+        dealRequestDto = new DealRequestDto("DR001", "USD", "ngn", new BigDecimal("1000.00"));
+        deal = new Deal(1L, "DR001", CurrencyIsoCode.USD, CurrencyIsoCode.NGN, LocalDateTime.now(), new BigDecimal("1000.00"));
+        dealRequestDto2 = new DealRequestDto("DR002", "NGN", "USD", new BigDecimal("2000.00"));
         dealRequestDtos = new ArrayList<>();
         dealRequestDtos.add(dealRequestDto);
         when(dealRepository.save(deal)).thenReturn(deal);
     }
 
-
-
     @Test
-    void testSuccessfulSaveDealRequest() {
-        when(dealRepository.existsByDealUniqueId(anyString())).thenReturn(false);
-        assertDoesNotThrow(() -> dealService.saveDealRequest(dealRequestDto));
-        verify(dealRepository, times(1)).save(any(Deal.class));
-    }
-
-    @Test
-    public void testSaveDealRequest_Success() {
-        dealService.saveDealRequest(dealRequestDto);
+    void saveDealRequests_SuccessfulExecution() {
+        when(dealRepository.existsByDealUniqueId("DR001")).thenReturn(false);
+        assertDoesNotThrow(() -> dealService.saveDealRequests(Collections.singletonList(dealRequestDto)));
+        verify(validationService, times(1)).validateDealRequest(dealRequestDto);
         verify(dealRepository, times(1)).existsByDealUniqueId("DR001");
         verify(dealRepository, times(1)).save(any(Deal.class));
     }
+
     @Test
-    void testSaveDealRequest_AlreadyExists() {
-        when(dealRepository.existsByDealUniqueId(dealRequestDto.getDealUniqueId())).thenReturn(true);
-        assertThrows(DealRequestAlreadyExistException.class, () -> dealService.saveDealRequest(dealRequestDto));
-        verify(dealRepository, never()).save(any(Deal.class));
-        verify(dealRepository, times(1)).existsByDealUniqueId(dealRequestDto.getDealUniqueId());
+    void saveDealRequests_DealRequestAlreadyExists() {
+        when(dealRepository.existsByDealUniqueId("DR001")).thenReturn(true);
+        DealRequestAlreadyExistException exception = assertThrows(DealRequestAlreadyExistException.class,
+                () -> dealService.saveDealRequests(Collections.singletonList(dealRequestDto)));
+        assertEquals("This deal request cannot be saved as it already exists", exception.getMessage());
+        verify(validationService, times(1)).validateDealRequest(dealRequestDto);
+        verify(dealRepository, times(1)).existsByDealUniqueId("DR001");
+        verify(dealRepository, never()).save(any());
     }
     @Test
-    void testSaveDealRequests_HandleDealAlreadyExistingException() {
-        List<DealRequestDto> dealRequestDtos = List.of(new DealRequestDto());
-        doThrow(DealRequestAlreadyExistException.class).when(dealRepository).save(any(Deal.class));
-        dealService.saveDealRequests(dealRequestDtos);
-        verify(dealRepository, times(1)).save(any(Deal.class));
-    }
-    @Test
-    void testSaveDealRequests_HandleDataIntegrityViolationException() {
-        List<DealRequestDto> dealRequestDtos = List.of(new DealRequestDto());
-        doThrow(new DataIntegrityViolationException("constraint [unique_deal_unique_id]"))
-                .when(dealRepository).save(any(Deal.class));
-        dealService.saveDealRequests(dealRequestDtos);
-        verify(dealRepository, times(1)).save(any(Deal.class));
-    }
-    @Test
-    public void testSaveDealRequests_HandleOtherKindsOfExceptions() {
-        List<DealRequestDto> dealRequestDtos = List.of(new DealRequestDto());
-        doThrow(new RuntimeException("An Error occurred while saving deal request: "))
-                .when(dealRepository).save(any(Deal.class));
-        dealService.saveDealRequests(dealRequestDtos);
-        verify(dealRepository, times(1)).save(any(Deal.class));
+    void getDealByUniqueId_DealExists_ReturnsDealResponse() {
+        String dealUniqueId = "DR001";
+        deal.setDealUniqueId(dealUniqueId);
+        when(dealRepository.findByDealUniqueId(dealUniqueId)).thenReturn(Optional.of(deal));
+        var response = dealService.getByUniqueId(dealUniqueId);
+        assertEquals(dealUniqueId, response.getDealUniqueId());
+        verify(dealRepository, times(1)).findByDealUniqueId(dealUniqueId);
     }
 
     @Test
-    public void testSaveDealRequests_HandleOtherExceptions() {
-        List<DealRequestDto> dealRequestDtos = List.of(new DealRequestDto());
-        doThrow(new RuntimeException("Data integrity violation occurred: "))
-                .when(dealRepository).save(any(Deal.class));
-        dealService.saveDealRequests(dealRequestDtos);
-        verify(dealRepository, times(1)).save(any(Deal.class));
+    void getDealByUniqueId_DealDoesNotExist_ThrowsException() {
+        String dealUniqueId = "DR004";
+        when(dealRepository.findByDealUniqueId("DR004")).thenReturn(Optional.empty());
+        InvalidDealRequestException exception = assertThrows(InvalidDealRequestException.class, () -> dealService.getByUniqueId(dealUniqueId));
+        assertEquals("This deal request does not exist", exception.getMessage());
+        verify(dealRepository, times(1)).findByDealUniqueId(dealUniqueId);
     }
 
 }

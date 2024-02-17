@@ -21,6 +21,13 @@ public class GlobalExceptionHandler {
         ApiErrorResponse apiErrorResponse = new ApiErrorResponse(409, xe.getMessage() , new Date());
         return new ResponseEntity<>(apiErrorResponse, HttpStatus.CONFLICT);
     }
+    @ExceptionHandler(InvalidDealRequestException.class)
+    public ResponseEntity<ApiErrorResponse> handleInvalidDealRequest(InvalidDealRequestException xe){
+        ApiErrorResponse apiErrorResponse = new ApiErrorResponse(400, xe.getMessage() , new Date());
+        return new ResponseEntity<>(apiErrorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiErrorResponse> handlePersonAlreadyExist(IllegalArgumentException xe){
         ApiErrorResponse apiErrorResponse = new ApiErrorResponse(400, xe.getMessage() , new Date());

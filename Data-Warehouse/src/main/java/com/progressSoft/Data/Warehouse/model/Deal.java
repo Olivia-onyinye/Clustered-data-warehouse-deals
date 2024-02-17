@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 @Builder
 @Entity
@@ -15,7 +16,7 @@ public class Deal {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    private Long id;
 
     @NotBlank(message = "Deal unique Id is required")
     @Column(name = "deal_unique_id", unique = true)
@@ -35,13 +36,13 @@ public class Deal {
 
     @Column(name = "deal_amount", nullable = false)
     @NotNull(message = "Deal amount is required")
-    private Double dealAmount;
+    private BigDecimal dealAmount;
 
     public Deal() {
     }
 
-    public Deal(Long id, String dealUniqueId, CurrencyIsoCode fromCurrency, CurrencyIsoCode toCurrency, LocalDateTime dealTimestamp, Double dealAmount) {
-        Id = id;
+    public Deal(Long id, String dealUniqueId, CurrencyIsoCode fromCurrency, CurrencyIsoCode toCurrency, LocalDateTime dealTimestamp, BigDecimal dealAmount) {
+        this.id = id;
         this.dealUniqueId = dealUniqueId;
         this.fromCurrency = fromCurrency;
         this.toCurrency = toCurrency;
@@ -50,11 +51,11 @@ public class Deal {
     }
 
     public Long getId() {
-        return Id;
+        return id;
     }
 
     public void setId(Long id) {
-        Id = id;
+        this.id = id;
     }
 
     public String getDealUniqueId() {
@@ -89,11 +90,11 @@ public class Deal {
         this.dealTimestamp = dealTimestamp;
     }
 
-    public Double getDealAmount() {
+    public BigDecimal getDealAmount() {
         return dealAmount;
     }
 
-    public void setDealAmount(Double dealAmount) {
+    public void setDealAmount(BigDecimal dealAmount) {
         this.dealAmount = dealAmount;
     }
 }

@@ -1,5 +1,8 @@
 package com.progressSoft.Data.Warehouse.enums;
 
+import java.util.Optional;
+import java.util.stream.Stream;
+
 public enum CurrencyIsoCode {
     AED,
     AFN,
@@ -90,5 +93,11 @@ public enum CurrencyIsoCode {
     VEF,
     YER,
     ZAR,
-    ZWD
+    ZWD;
+
+    public static Optional<CurrencyIsoCode> get(String code){
+        return Stream.of(values())
+                .filter(v->v.name().equalsIgnoreCase(code))
+                .findFirst();
+    }
 }

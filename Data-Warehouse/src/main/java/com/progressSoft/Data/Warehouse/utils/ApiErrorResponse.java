@@ -7,8 +7,6 @@ public class ApiErrorResponse {
     private String errorMessage;
     private Date date;
 
-    public ApiErrorResponse() {
-    }
     public ApiErrorResponse(Integer errorCode, String errorMessage, Date date) {
         this.errorCode = errorCode;
         this.errorMessage = errorMessage;
